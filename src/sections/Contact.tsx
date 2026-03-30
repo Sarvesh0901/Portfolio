@@ -63,15 +63,24 @@ export function Contact() {
     try {
       // Use environment variable for backend API URL
       const apiUrl = import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:3000';
+      console.log('Sending message to:', `${apiUrl}/api/contact`);
+      console.log('Payload:', formData);
+      
       const response = await fetch(`${apiUrl}/api/contact`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify(formData),
+        credentials: 'include', // Include cookies for CORS
       });
 
+      console.log('Response status:', response.status);
       const data = await response.json();
+      console.log('Response data:', data);
 
       if (response.ok) {
+        console.log('Message sent successfully!');
         setSubmitStatus('success');
         setFormData({ name: '', email: '', message: '' });
         
@@ -80,8 +89,8 @@ export function Contact() {
           setSubmitStatus('idle');
         }, 5000);
       } else {
-        setSubmitStatus('error');
         console.error('Submission error:', data);
+        setSubmitStatus('error');
         
         // Reset error message after 5 seconds
         setTimeout(() => {
